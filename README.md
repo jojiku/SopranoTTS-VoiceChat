@@ -1,25 +1,25 @@
-# Легковесный голосовой чат на русском
+# SopranoTTS Voice Chat
 
-## 🎬 Демо
+## 🎬 Demo
 <table class="center">
   <tr style="font-weight: bolder;text-align:center;">
   </tr>
   <tr>
     <td>
-      <video src=https://github.com/user-attachments/assets/765ccd70-aeda-4105-ae19-734be95395b1 controls preload></video>
+      <video src=https://github.com/user-attachments/assets/d4c5789e-1d4e-46a6-9968-22582a02a198 controls preload></video>
     </td>
   </tr>
 </table>
 
-## ✨ Особенности
+## ✨ Features
 
-| Функция | Описание | Технологии
+| Feature | Description | Technologies
 |---------|-------------|-------------
-| ➡️ **Минимальная задержка в ~300мс** | <ul><li>Стриминг LLM, STT</li><li>заранее предсказание ответа пользователя</li><li>модель для определения окончания мысли</li></ul> | Silero, Faster whisper, любая локальная или API LLM. Дообучил RuBERT на синт. датасете ([HuggingFace](https://huggingface.co/Silxxor/Russian-Addressee-detector))
-| 🔄 **Прерывание** | Естественное прерывание системы во время речи | Внутренняя логика
-| 🎯 **Определение адресата** | Понимает, когда вы обращаетесь к ней, а не к кому-то другому | Дообучил RuBERT на ASR транскриптах русских телефонных разговоров ([HuggingFace](https://huggingface.co/Silxxor/russian-turn-detector))
+| ➡️ **Minimal ~300ms latency** | <ul><li>Streaming LLM, STT</li><li>User response prediction</li><li>End-of-turn detection model</li></ul> | SopranoTTS, Faster Whisper, any local or API LLM. Fine-tuned BERT on parlament discussions ([HuggingFace](https://huggingface.co/KoljaB/SentenceFinishedClassification/tree/main))
+| 🔄 **Interruption** | Natural system interruption during speech | Internal logic
+| 🎯 **Addressee detection** | Understands when you're talking to it vs someone else | Fine-tuned BERT on conversations ([HuggingFace](https://huggingface.co/Silxxor/Lucy-addressee-detector))
 
-## 🏗️ Архитектура
+## 🏗️ Architecture
 
 ```
 ┌─────────────┐     ┌─────────────────┐     ┌─────────────┐
@@ -41,119 +41,117 @@
                              ▼
                       ┌──────────────┐     ┌─────────────┐
                       │  RealtimeTTS │────▶│   Speaker   │
-                      │   (Silero)   │     │  (WebSocket)│
+                      │ (SopranoTTS) │     │  (WebSocket)│
                       └──────────────┘     └─────────────┘
 ```
 
 
-## 📋 Требования
+## 📋 Requirements
 
-- **Python** 3.10 - 3.12
-- **CUDA** 12.1 (рекомендуется, ~4GB VRAM)
-- **Node.js** 18+ (для фронтенда)
-- **Poetry** 1.8+ для управления зависимостями
+- **Python** 3.10
+- **CUDA** 12.1 (recommended, ~4GB VRAM)
+- **Node.js** 18+ (for frontend)
+- **Poetry** 1.8+ for dependency management
 
-## 🚀 Установка
+## 🚀 Installation
 
-### 1. Установите Poetry
+### 1. Install Poetry
 
 ```bash
 curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-### 2. Клонируйте и установите
+### 2. Clone and install
 
 ```bash
-git clone https://github.com/jojiku/Russian-Realtime-Voicechat.git
-cd Russian-Realtime-Voicechat
+git clone https://github.com/jojiku/SopranoTTS-VoiceChat.git
+cd SopranoTTS-VoiceChat
 poetry install
 ```
 
-### 3. Настройте окружение
+### 3. Configure environment
 
 ```bash
-# В папке code:
+# In the code folder:
 cd code
 cp .env.template .env
 ```
 
-### 4. Установите фронтенд
+### 4. Install frontend
 
 ```bash
-# В папке code:
+# In the code folder:
 npm install
 ```
 
-## ⚙️ Конфигурация
+## ⚙️ Configuration
 
-Отредактируйте `.env` по необходимости:
+Edit `.env` as needed:
 ```env
-# Язык
-APP_LANG=ru
+# Language
+APP_LANG=en
 
-# LLM бэкенд (выберите один)
+# LLM backend (choose one)
 LMSTUDIO_BASE_URL=http://127.0.0.1:1234/v1
 # OLLAMA_BASE_URL=http://127.0.0.1:11434
 # OPENAI_API_KEY=sk-... 
 # GEMINI_API_KEY=...
 # GROQ_API_KEY=gsk_...
 
-# Архитектура GPU
+# GPU architecture
 TORCH_CUDA_ARCH_LIST=7.5
 ```
 
-## 🎮 Использование
+## 🎮 Usage
 
-### Запустите сервер
+### Run the server
 ```bash
 poetry run python server.py
 ```
 
-### Откройте интерфейс
+### Open the interface
 
-Откройте `http://localhost:3000` в браузере.
+Navigate to `http://localhost:3000` in your browser.
 
-## 📁 Структура проекта
+## 📁 Project Structure
 
 ```
-Russian-Realtime-Voicechat/
-├── server.py                  # FastAPI WebSocket сервер
-├── speech_pipeline_manager.py # Оркестрация LLM + TTS
-├── audio_module.py            # Обработка TTS (Silero)
-├── audio_in.py                # Обработка входного аудио
-├── transcribe.py              # Обработка STT (Whisper)
-├── llm_module.py              # Мультибэкенд интерфейс LLM
-├── addressee_detector.py      # "Это обращаются ко мне или нет?"
-├── turndetect.py              # Предсказание окончания мысли
-├── silero_engine.py           # Обёртка движка Silero TTS
-├── pyproject.toml             # Конфигурация Poetry
-├── static/                    # Исходники фронтенда
-├── dist/                      # Собранный фронтенд (генерируется при запуске)
-└── resources/                 # Тут лежит промпт
+SopranoTTS-VoiceChat/
+├── server.py                  # FastAPI WebSocket server
+├── speech_pipeline_manager.py # LLM + TTS orchestration
+├── audio_module.py            # TTS processing (SopranoTTS)
+├── audio_in.py                # Input audio processing
+├── transcribe.py              # STT processing (Whisper)
+├── llm_module.py              # Multi-backend LLM interface
+├── addressee_detector.py      # "Is this directed at me or not?"
+├── turndetect.py              # End-of-turn prediction
+├── soprano_engine.py          # SopranoTTS engine wrapper
+├── pyproject.toml             # Poetry configuration
+├── static/                    # Frontend sources
+├── dist/                      # Built frontend (generated on startup)
+└── resources/                 # Prompt storage
 ```
 
-## 📊 Производительность
+## 📊 Performance
 
-Показатели при 6 GB VRAM на 1660 TI от последнего слова пользователя до первого аудио чанка от системы:
+Metrics with 6 GB VRAM on 1660 TI from user's last word to first system audio chunk:
 
-| Компонент | Задержка | Память
+| Component | Latency | Memory
 |-----------|---------|---------
-| STT (Whisper base) | ~100мс | ~1000 MB
-| LLM (vikhr-llama-2b) | ~150мс TTFT | ~3 GB
-| TTS (Silero) | ~40мс | ~200 MB
-| Turn detection (Rubert) | ~20мс | ~100 MB
-| Addressee detection (Rubert) | ~20мс | ~100 MB
-| **Весь пайплайн** | **~300мс** | **~5 GB**
+| STT (Whisper base) | ~100ms | ~1000 MB
+| LLM (any) | ~150ms TTFT | ~3 GB
+| TTS (SopranoTTS) | ~40ms | ~200 MB
+| Turn detection (Rubert) | ~20ms | ~100 MB
+| Addressee detection (Rubert) | ~20ms | ~100 MB
+| **Full pipeline** | **~300ms** | **~5 GB**
 
 
-## 🙏 Благодарность
-Замечательный код от Kolja Beigel и модели от snakers4
+## 🙏 Acknowledgments
+Awesome code from Kolja Beigel and model from ekwek1
 - https://github.com/KoljaB/RealtimeTTS
 - https://github.com/KoljaB/RealtimeVoiceChat
 - https://github.com/KoljaB/RealtimeSTT
-- https://github.com/snakers4/open_stt
-- https://github.com/snakers4/silero-models
+- https://github.com/ekwek1/soprano
 
 ## License 📜
 **MIT License**
-
