@@ -141,8 +141,8 @@ Metrics with 6 GB VRAM on 1660 TI from user's last word to first system audio ch
 | STT (Whisper base) | ~100ms | ~1000 MB
 | LLM (any) | ~150ms TTFT | ~3 GB
 | TTS (SopranoTTS) | ~40ms | ~200 MB
-| Turn detection (Rubert) | ~20ms | ~100 MB
-| Addressee detection (Rubert) | ~20ms | ~100 MB
+| Turn detection (bert) | ~20ms | ~100 MB
+| Addressee detection (bert) | ~20ms | ~100 MB
 | **Full pipeline** | **~300ms** | **~5 GB**
 
 
